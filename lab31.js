@@ -1,4 +1,4 @@
-let rand1 = Math.random() * 101;
+/*let rand1 = Math.random() * 101;
 let r1 = parseInt(rand1);
 let rand2 = Math.random() * 101;
 let r2 = parseInt(rand2);
@@ -10,5 +10,5 @@ if(Number.isInteger(res))
     {
         alert("Вы знаете арифметику");
     } else alert("Вы не знаете арифметику");
-} else alert("Вы не знаете цифры");
+} else alert("Вы не знаете цифры"); */
 
