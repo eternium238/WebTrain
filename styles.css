@@ -1,0 +1,101 @@
+/* Общие стили для всего сайта */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #6c65ab 0%, #b678bf 100%);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Контейнер для контента */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Стили для шапки сайта */
+header {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+header h1 {
+    font-size: 3em;
+    color: #764ba2;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+header p {
+    font-size: 1.2em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Стили для списка продуктов/услуг */
+.services-list {
+    list-style: none;
+}
+
+.services-list li {
+    padding: 15px;
+    margin-bottom: 10px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    font-size: 1.1em;
+    border-left: 5px solid #764ba2;
+}
+
+.services-list li:hover {
+    transform: translateX(10px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+a {
+    color: #667eea;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #764ba2;
+}
+
+.table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+table {
+    width: 30%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15 px rgb(0,0,0,0.1);
+    margin: 0 auto;
+}
+
+thead {
+    background: linear-gradient(135 deg, #667eea, #764ba2);
+    color: white;
+}
+
+td {
+    padding: 12px 15px;
+    border-bottom: 1 px solid #e0e0e0;
+}
