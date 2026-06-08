@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    
+      <h3>Change values of 2 variables</h3>
+    <form>
+        <h4>Enter values:</h4>
+        <label>Variable 1: <input type="text" id="varA" value="10" onblur = onblu()></label><br>
+        <label>Variable 2: <input type="text" id="varB" value="20" onblur = onblu()></label><br>
+        <br>
+        <button type="button" onclick="swapValues()">Change by Yourself</button>
+    </form><br>
+    <script>
+        let inputA = document.getElementById('varA');
+        let inputB = document.getElementById('varB');
+
+        function swapValues() {
+            let temp = inputA.value;
+            inputA.value = inputB.value;
+            inputB.value = temp;
+        }
+        function onblu()
+        {
+            swapValues();
+        }
+    </script>
+  </body>
+</html>

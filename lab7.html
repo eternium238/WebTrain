@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление контрактами сотрудников</title>
+</head>
+<body>
+    <h2>Анкета сотрудников</h2>
+    <form id="employeeForm">
+        <div id="employeesContainer">
+            <div class="employee-entry">
+                <input type="text" placeholder="Фамилия" class="surname" required>
+                <input type="date" class="contractDate" required>
+                <input type="number" placeholder="Срок (годы)" class="contractDuration" min="0" step="1" required>
+                <button type="button" class="removeBtn">Удалить</button>
+            </div>
+        </div>
+        <button type="button" id="addEmployeeBtn">Добавить сотрудника</button>
+        <button type="submit" id="saveEmployeesBtn">Сохранить данные</button>
+        <button type="button" id="clearStorageBtn">Очистить хранилище</button>
+    </form>
+
+    <hr>
+
+    <h3>Поиск по времени года</h3>
+    <select id="seasonSelect">
+        <option value="winter">Зима</option>
+        <option value="spring">Весна</option>
+        <option value="summer">Лето</option>
+        <option value="autumn">Осень</option>
+    </select>
+    <button id="searchBySeasonBtn">Найти</button>
+    <div id="seasonResult"></div>
+
+    <h3>Поиск по кварталу</h3>
+    <select id="quarterSelect">
+        <option value="1">1 квартал</option>
+        <option value="2">2 квартал</option>
+        <option value="3">3 квартал</option>
+        <option value="4">4 квартал</option>
+    </select>
+    <button id="searchByQuarterBtn">Найти</button>
+    <div id="quarterResult"></div>
+
+    <h3>Поиск по действующим контрактам на заданную дату</h3>
+    <input type="date" id="activeDate">
+    <button id="searchActiveBtn">Найти</button>
+    <div id="activeResult"></div>
+
+    <h3>Поиск по завершенным контрактам на заданную дату</h3>
+    <input type="date" id="expiredDate">
+    <button id="searchExpiredBtn">Найти</button>
+    <div id="expiredResult"></div>
+
+    <script>
+        // Ключ для Local Storage
+        const STORAGE_KEY = 'employees_contracts';
+        
+        // Глобальный массив сотрудников
+        let employees = [];
+
+        // Функции для работы с Local Storage
+        function saveToLocalStorage(employeesArray) {
+            try {
+                // Преобразуем даты в строки ISO для корректного сохранения
+                const serialized = employeesArray.map(emp => ({
+                    ...emp,
+                    startDate: emp.startDate.toISOString(),
+                    endDate: emp.endDate.toISOString()
+                }));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(serialized));
+                console.log('Данные сохранены в Local Storage');
+                return true;
+            } catch (error) {
+                console.error('Ошибка сохранения в Local Storage:', error);
+                return false;
+            }
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    // Восстанавливаем объекты Date из строк ISO
+                    const restored = parsed.map(emp => ({
+                        ...emp,
+                        startDate: new Date(emp.startDate),
+                        endDate: new Date(emp.endDate)
+                    }));
+                    console.log('Данные загружены из Local Storage');
+                    return restored;
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки из Local Storage:', error);
+            }
+            return null;
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem(STORAGE_KEY);
+            console.log('Local Storage очищен');
+        }
+
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+            const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+            return weekNo;
+        }
+
+        function addEmployeeEntry(surname = '', date = '', duration = '') {
+            const container = document.getElementById('employeesContainer');
+            const entry = document.createElement('div');
+            entry.className = 'employee-entry';
+            entry.innerHTML = `
+                <input type="text" placeholder="Фамилия" class="surname" value="${surname}" required>
+                <input type="date" class="contractDate" value="${date}" required>
+                <input type="number" placeholder="Срок (годы)" class="contractDuration" value="${duration}" min="0" step="1" required>
+                <button type="button" class="removeBtn">Удалить</button>
+            `;
+            const removeBtn = entry.querySelector('.removeBtn');
+            removeBtn.addEventListener('click', () => {
+                entry.remove();
+            });
+            container.appendChild(entry);
+        }
+
+        document.getElementById('addEmployeeBtn').addEventListener('click', () => {
+            addEmployeeEntry();
+        });
+
+        function collectEmployeesFromForm() {
+            const entries = document.querySelectorAll('#employeesContainer .employee-entry');
+            const newList = [];
+            for (let entry of entries) {
+                const surname = entry.querySelector('.surname').value.trim();
+                const contractDate = entry.querySelector('.contractDate').value;
+                const duration = parseInt(entry.querySelector('.contractDuration').value, 10);
+                if (surname && contractDate && !isNaN(duration)) {
+                    const startDate = new Date(contractDate);
+                    if (!isNaN(startDate.getTime())) {
+                        const endDate = new Date(startDate);
+                        endDate.setFullYear(endDate.getFullYear() + duration);
+                        newList.push({
+                            surname: surname,
+                            startDate: startDate,
+                            duration: duration,
+                            endDate: endDate
+                        });
+                    }
+                }
+            }
+            return newList;
+        }
+
+        // Функция для отображения данных из хранилища в форме
+        function displayEmployeesInForm(employeesArray) {
+            // Очищаем контейнер
+            const container = document.getElementById('employeesContainer');
+            container.innerHTML = '';
+            
+            // Добавляем сотрудников из массива
+            if (employeesArray && employeesArray.length > 0) {
+                employeesArray.forEach(emp => {
+                    // Форматируем дату для input type="date" (YYYY-MM-DD)
+                    const dateStr = emp.startDate.toISOString().split('T')[0];
+                    addEmployeeEntry(emp.surname, dateStr, emp.duration.toString());
+                });
+            } else {
+                // Если массив пуст, добавляем одну пустую форму
+                addEmployeeEntry();
+            }
+        }
+
+        document.getElementById('employeeForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            employees = collectEmployeesFromForm();
+            
+            // Сохраняем в Local Storage
+            if (saveToLocalStorage(employees)) {
+                alert(`Сохранено ${employees.length} сотрудников в Local Storage`);
+            } else {
+                alert(`Сохранено ${employees.length} сотрудников (только в памяти)`);
+            }
+            console.log('Текущие сотрудники:', employees);
+        });
+
+        // Кнопка очистки хранилища
+        document.getElementById('clearStorageBtn').addEventListener('click', () => {
+            if (confirm('Вы уверены, что хотите очистить все сохраненные данные?')) {
+                clearLocalStorage();
+                employees = [];
+                displayEmployeesInForm([]);
+                alert('Данные в Local Storage очищены');
+            }
+        });
+
+        function getSeason(date) {
+            const month = date.getMonth();
+            if (month === 11 || month === 0 || month === 1) return 'winter';
+            if (month >= 2 && month <= 4) return 'spring';
+            if (month >= 5 && month <= 7) return 'summer';
+            return 'autumn';
+        }
+
+        function getQuarter(date) {
+            const month = date.getMonth();
+            if (month <= 2) return 1;
+            if (month <= 5) return 2;
+            if (month <= 8) return 3;
+            return 4;
+        }
+
+        function displayResult(containerId, employeeList, title) {
+            const container = document.getElementById(containerId);
+            if (employeeList.length === 0) {
+                container.innerHTML = `<p>${title}: Нет сотрудников</p>`;
+                return;
+            }
+            let html = `<p><strong>${title}:</strong></p><ul>`;
+            employeeList.forEach(emp => {
+                const startStr = emp.startDate.toLocaleDateString();
+                const endStr = emp.endDate.toLocaleDateString();
+                html += `<li>${emp.surname} (контракт с ${startStr} на ${emp.duration} год(а), окончание: ${endStr})</li>`;
+            });
+            html += `</ul>`;
+            container.innerHTML = html;
+        }
+
+        document.getElementById('searchBySeasonBtn').addEventListener('click', () => {
+            if (employees.length === 0) {
+                document.getElementById('seasonResult').innerHTML = '<p>Сначала сохраните данные сотрудников.</p>';
+                return;
+            }
+            const season = document.getElementById('seasonSelect').value;
+            const filtered = employees.filter(emp => getSeason(emp.endDate) === season);
+            let seasonName = '';
+            switch(season) {
+                case 'winter': seasonName = 'зимой'; break;
+                case 'spring': seasonName = 'весной'; break;
+                case 'summer': seasonName = 'летом'; break;
+                case 'autumn': seasonName = 'осенью'; break;
+            }
+            displayResult('seasonResult', filtered, `Сотрудники, контракт которых заканчивается ${seasonName}`);
+        });
+
+        document.getElementById('searchByQuarterBtn').addEventListener('click', () => {
+            if (employees.length === 0) {
+                document.getElementById('quarterResult').innerHTML = '<p>Сначала сохраните данные сотрудников.</p>';
+                return;
+            }
+            const quarter = parseInt(document.getElementById('quarterSelect').value, 10);
+            const filtered = employees.filter(emp => getQuarter(emp.endDate) === quarter);
+            displayResult('quarterResult', filtered, `Сотрудники, контракт которых заканчивается в ${quarter}-м квартале`);
+        });
+
+        document.getElementById('searchActiveBtn').addEventListener('click', () => {
+            if (employees.length === 0) {
+                document.getElementById('activeResult').innerHTML = '<p>Сначала сохраните данные сотрудников.</p>';
+                return;
+            }
+            const dateStr = document.getElementById('activeDate').value;
+            if (!dateStr) {
+                document.getElementById('activeResult').innerHTML = '<p>Выберите дату.</p>';
+                return;
+            }
+            const targetDate = new Date(dateStr);
+            targetDate.setHours(0, 0, 0, 0);
+            const filtered = employees.filter(emp => {
+                const start = new Date(emp.startDate);
+                start.setHours(0, 0, 0, 0);
+                const end = new Date(emp.endDate);
+                end.setHours(0, 0, 0, 0);
+                return start <= targetDate && end >= targetDate;
+            });
+            displayResult('activeResult', filtered, `Сотрудники с действующим контрактом на ${targetDate.toLocaleDateString()}`);
+        });
+
+        document.getElementById('searchExpiredBtn').addEventListener('click', () => {
+            if (employees.length === 0) {
+                document.getElementById('expiredResult').innerHTML = '<p>Сначала сохраните данные сотрудников.</p>';
+                return;
+            }
+            const dateStr = document.getElementById('expiredDate').value;
+            if (!dateStr) {
+                document.getElementById('expiredResult').innerHTML = '<p>Выберите дату.</p>';
+                return;
+            }
+            const targetDate = new Date(dateStr);
+            targetDate.setHours(0, 0, 0, 0);
+            const filtered = employees.filter(emp => {
+                const end = new Date(emp.endDate);
+                end.setHours(0, 0, 0, 0);
+                return end < targetDate;
+            });
+            displayResult('expiredResult', filtered, `Сотрудники, контракт которых завершен до ${targetDate.toLocaleDateString()}`);
+        });
+
+        // Инициализация при загрузке страницы
+        window.addEventListener('DOMContentLoaded', () => {
+            // Пробуем загрузить данные из Local Storage
+            const storedEmployees = loadFromLocalStorage();
+            
+            if (storedEmployees && storedEmployees.length > 0) {
+                // Если данные есть в хранилище, используем их
+                employees = storedEmployees;
+                displayEmployeesInForm(employees);
+                console.log('Загружены сохраненные данные:', employees);
+            } else {
+                // Если данных нет, создаем демонстрационные
+                addEmployeeEntry('Иванов', '2023-01-15', '2');
+                addEmployeeEntry('Петрова', '2022-05-20', '3');
+                addEmployeeEntry('Сидоров', '2021-12-01', '1');
+                addEmployeeEntry('Кузнецова', '2024-03-10', '5');
+                addEmployeeEntry('Смирнов', '2020-07-19', '4'); 
+                addEmployeeEntry('Масленков', '2025-11-12', '2');
+                addEmployeeEntry('Шлыков', '2026-10-07', '3');
+                addEmployeeEntry('Шекордо', '2025-12-31', '1');
+                addEmployeeEntry('Даниленко', '2025-12-18', '5');
+                addEmployeeEntry('Демидов', '2026-02-19', '4');
+                
+                employees = collectEmployeesFromForm();
+                saveToLocalStorage(employees);
+                console.log('Созданы демонстрационные данные:', employees);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <h3>Distance from this point to start of coordinates</h3>
+    <form>
+        <h4>Coordinates:</h4>
+        <label>X: <input type="number" id="x" step="any" value="3" onselect=calculateDistance()></label><br>
+        <label>Y: <input type="number" id="y" step="any" value="4" onselect=calculateDistance()></label><br>
+        <br>
+        <button type="button" onclick="calculateDistance()">Calculate Distance</button>
+    </form>
+    
+    <h4>Result:</h4>
+    <input type="text" id="distanceResult" readonly size="30"><br>
+
+    <script>
+        let xInput = document.getElementById('x');
+        let yInput = document.getElementById('y');
+        let result = document.getElementById('distanceResult');
+
+        function calculateDistance() {
+            let x = parseFloat(xInput.value) || 0;
+            let y = parseFloat(yInput.value) || 0;
+            
+            let distance = Math.sqrt(x * x + y * y);    
+            result.value = distance.toFixed(4);
+        }
+        function onsel()
+        {
+            result.value= ""
+        }
+        calculateDistance();
+    </script>
+  </body>
+</html>

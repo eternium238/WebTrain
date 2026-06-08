@@ -1,0 +1,235 @@
+* {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #e9f0f5;
+            margin: 0;
+            padding: 24px 20px;
+            color: #1a2c3e;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #0a2b3e;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        h1 small {
+            font-size: 0.85rem;
+            font-weight: normal;
+            background: #d4e2ed;
+            padding: 6px 14px;
+            border-radius: 40px;
+            color: #1e4a6e;
+        }
+        .sub {
+            color: #2c5a7a;
+            border-left: 4px solid #2c7da0;
+            padding-left: 16px;
+            margin: 16px 0 28px 0;
+            font-weight: 500;
+        }
+        /* форма добавления */
+        .form-card {
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            transition: all 0.2s;
+            border: 1px solid #dce5ec;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: flex-end;
+        }
+        .input-group {
+            flex: 1 1 180px;
+            min-width: 140px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #4b6f8c;
+            margin-bottom: 6px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid #cbdae6;
+            font-size: 0.95rem;
+            background: #fefefe;
+            transition: 0.2s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 3px rgba(44,125,160,0.2);
+        }
+        button {
+            background: #1f6392;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        button:hover {
+            background: #0e4b72;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background: #5c7f9c;
+        }
+        .btn-secondary:hover {
+            background: #3f627f;
+        }
+        .reset-btn {
+            background: #b0c4d9;
+            color: #1f4a6e;
+        }
+        .reset-btn:hover {
+            background: #92adc2;
+        }
+        /* панель фильтров */
+        .filters-panel {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 24px;
+            margin-bottom: 30px;
+            border: 1px solid #dce5ec;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: flex-end;
+        }
+        .filter-group {
+            flex: 1 1 200px;
+        }
+        .filter-group label {
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 6px;
+            color: #1e4c6e;
+        }
+        select, .filter-group input {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 16px;
+            border: 1px solid #cbdae6;
+            background: white;
+            font-size: 0.9rem;
+        }
+        .query-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .result-section {
+            background: #ffffffdd;
+            backdrop-filter: blur(2px);
+            border-radius: 28px;
+            padding: 8px 0 12px 0;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        .result-card {
+            background: white;
+            border-radius: 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2edf2;
+            overflow: hidden;
+        }
+        .result-header {
+            background: #eef4fa;
+            padding: 14px 24px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #d4e0e9;
+            color: #1c5679;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .result-count {
+            font-size: 0.85rem;
+            background: #cbdde9;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-weight: normal;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e9edf2;
+        }
+        th {
+            background: #f8fafd;
+            font-weight: 600;
+            color: #1f5780;
+        }
+        tr:hover td {
+            background-color: #f6fafe;
+        }
+        .empty-msg {
+            padding: 28px;
+            text-align: center;
+            color: #6f8eaa;
+            font-style: italic;
+        }
+        .note {
+            font-size: 0.75rem;
+            color: #5d7f9a;
+            margin-top: 12px;
+            text-align: right;
+            padding: 8px 16px;
+            border-top: 1px solid #e2edf2;
+        }
+        @media (max-width: 720px) {
+            body { padding: 16px; }
+            th, td { padding: 8px 10px; }
+            .form-row, .filters-panel { flex-direction: column; align-items: stretch; }
+        }
+        hr {
+            margin: 20px 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #c0d4e4, transparent);
+        }
+        .badge {
+            background: #e0f0f7;
+            border-radius: 30px;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+   

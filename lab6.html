@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Праздничное меню с указателем-стрелка</title>
+</head>
+<body>
+    <table border="0" cellpadding="10" cellspacing="0" width="100%">
+        <tr>
+            <td valign="top" width="250">
+                <h3>ПРАЗДНИКИ</h3>
+                <ul id="menu" style="list-style: none; padding-left: 0;">
+                    <li style="margin: 10px 0; padding: 8px; background: #f0f0f0; cursor: pointer;" data-holiday="newyear">Новый год</li>
+                    <li style="margin: 10px 0; padding: 8px; background: #f0f0f0; cursor: pointer;" data-holiday="valentine">День святого Валентина</li>
+                    <li style="margin: 10px 0; padding: 8px; background: #f0f0f0; cursor: pointer;" data-holiday="march8">8 Марта</li>
+                    <li style="margin: 10px 0; padding: 8px; background: #f0f0f0; cursor: pointer;" data-holiday="easter">Пасха</li>
+                    <li style="margin: 10px 0; padding: 8px; background: #f0f0f0; cursor: pointer;" data-holiday="birthday">День рождения</li>
+                </ul>
+                <div id="pointer" style="margin-top: -10px; font-size: 40px; color: red;"> -> </div>
+            </td>
+            <td valign="top" id="contentArea" style="padding: 20px; background: #fafafa; min-height: 400px;">
+                <h3>Изображение праздника</h3>
+                <div id="imageContainer">
+                </div>
+                <button id="deleteBtn" style="margin-top: 20px; padding: 8px 16px; font-size: 16px; cursor: pointer;">🗑 Удалить изображение</button>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+        const menuItems = document.querySelectorAll('#menu li');
+        const pointer = document.getElementById('pointer');
+        const imageContainer = document.getElementById('imageContainer');
+        const deleteBtn = document.getElementById('deleteBtn');
+        
+        let currentImageElement = null;
+        
+        const images = {
+            newyear: '/res/img/ny.jpg',
+            valentine: '/res/img/hvd.png',
+            march8: '/res/img/m8.png',
+            easter: '/res/img/pasxa.png',
+            birthday: '/res/img/hbd.png'
+        };
+        
+        const altTexts = {
+            newyear: 'Новогодняя ёлка',
+            valentine: 'Валентинка',
+            march8: 'Букет мимозы',
+            easter: 'Пасхальное яйцо',
+            birthday: 'Торт со свечами'
+        };
+        
+        function movePointerTo(element) {
+            const rect = element.getBoundingClientRect();
+            const menuRect = document.querySelector('#menu').getBoundingClientRect();
+            pointer.style.position = 'absolute';
+            pointer.style.left = (rect.left - 35) + 'px';
+            pointer.style.top = (rect.top + rect.height / 2 - 12) + 'px';
+        }
+        
+        function removeCurrentImage() {
+            if (currentImageElement && currentImageElement.parentNode === imageContainer) {
+                imageContainer.removeChild(currentImageElement);
+                currentImageElement = null;
+            }
+        }
+        
+        function showImage(holidayKey) {
+            removeCurrentImage();
+            
+            const img = document.createElement('img');
+            img.src = images[holidayKey];
+            img.alt = altTexts[holidayKey];
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '400px';
+            img.style.borderRadius = '12px';
+            img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+            img.style.marginTop = '10px';
+            
+            const title = document.createElement('h4');
+            title.textContent = altTexts[holidayKey];
+            title.style.margin = '0 0 10px 0';
+            title.style.color = '#d44c2f';
+            
+            const wrapper = document.createElement('div');
+            wrapper.appendChild(title);
+            wrapper.appendChild(img);
+            
+            imageContainer.appendChild(wrapper);
+            currentImageElement = wrapper;
+        }
+        
+        function handleMenuClick(event) {
+            const li = event.currentTarget;
+            const holiday = li.getAttribute('data-holiday');
+            
+            movePointerTo(li);
+            showImage(holiday);
+        }
+        
+        menuItems.forEach(item => {
+            item.addEventListener('click', handleMenuClick);
+        });
+        
+        deleteBtn.addEventListener('click', function() {
+            removeCurrentImage();
+            if (currentImageElement === null) {
+                const message = document.createElement('p');
+                message.textContent = 'Изображение удалено';
+                message.style.color = '#888';
+                message.style.fontStyle = 'italic';
+                message.id = 'tempMsg';
+                imageContainer.appendChild(message);
+                setTimeout(() => {
+                    const msg = document.getElementById('tempMsg');
+                    if (msg && msg.parentNode === imageContainer) {
+                        imageContainer.removeChild(msg);
+                    }
+                }, 1500);
+            }
+        });
+        
+        const firstItem = document.querySelector('#menu li');
+        if (firstItem) {
+            movePointerTo(firstItem);
+            showImage('newyear');
+        }
+        
+        window.addEventListener('resize', function() {
+            const activeItem = document.querySelector('#menu li[data-holiday]');
+            const holidayAttr = activeItem ? activeItem.getAttribute('data-holiday') : null;
+            if (holidayAttr && currentImageElement) {
+                const currentLi = Array.from(menuItems).find(item => item.getAttribute('data-holiday') === holidayAttr);
+                if (currentLi) {
+                    movePointerTo(currentLi);
+                }
+            } else if (activeItem) {
+                movePointerTo(activeItem);
+            }
+        });
+    </script>
+</body>
+</html>

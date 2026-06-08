@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №9 - jQuery события и методы </title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="styles9.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header" id="siteHeader">
+            <h1>Мир мотоциклов</h1>
+            <p>Самые популярные модели 2024 года</p>
+        </div>
+
+        <div class="logo">
+            <img src="images9/logo.webp" alt="logo" title="Логотип сайта">
+            <p>Логотип компании</p>
+        </div>
+
+        <div class="gallery">
+            <h2>Наши мотоциклы</h2>
+            <div class="moto-item">
+                <img src="images9/1.webp" alt="moto1.jpg" id="moto1">
+                <p>Honda CBR1000RR</p>
+            </div>
+            <div class="moto-item">
+                <img src="images9/2.webp" alt="moto2.jpg" id="moto2">
+                <p>Yamaha R1</p>
+            </div>
+            <div class="moto-item">
+                <img src="images9/3.webp" alt="moto3.jpg">
+                <p>Suzuki GSX-R1000</p>
+            </div>
+            <div class="moto-item">
+                <img src="images9/4.webp" alt="moto4.jpg">
+                <p>Kawasaki Ninja</p>
+            </div>
+            <div class="moto-item">
+                <img src="images9/5.webp" alt="moto5.jpg">
+                <p>Ducati Panigale</p>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button id="btnTask1">Задание 1: Работа с логотипом</button>
+            <button id="btnTask2">Задание 2: Скрыть все картинки (кроме первой)</button>
+            <button id="btnTask3">Задание 3: Анимация с moto2.jpg</button>
+            <button id="btnReset">Сбросить все изменения</button>
+        </div>
+        <div id="result"></div>
+    </div>
+    <script src = "script9.js">     
+    </script>
+</body>
+</html>

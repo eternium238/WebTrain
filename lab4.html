@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <form>
+        <h4>Напишите свое фио и номер школы:</h4>
+        <label>ФИО: <input type="text" id="fio" required></label><br><br>
+        <label>Номер школы: <input type="number" id="scn" value="0" step="1" required></label><br>
+        <br>    
+        <label>Задание 1:
+            <select id="sel1" name="value">
+            <option value="0">0</option>
+            <option value="0.333">1/3</option>
+            <option value="0.667">2/3</option>
+            <option value="1">1</option>
+        </select></label>
+        <br><br>
+        <label>Задание 2:
+            <select id="sel2" name="value">
+            <option value="0">0</option>
+            <option value="0.333">1/3</option>
+            <option value="0.667">2/3</option>
+            <option value="1">1</option>
+        </select></label>
+        <br><br>
+        <label>Задание 3:
+            <select id="sel3" name="value">
+            <option value="0">0</option>
+            <option value="0.333">1/3</option>
+            <option value="0.667">2/3</option>
+            <option value="1">1</option>
+        </select></label>
+        <br><br>
+        <label>Задание 4:
+            <select id="sel4" name="value">
+            <option value="0">0</option>
+            <option value="0.333">1/3</option>
+            <option value="0.667">2/3</option>
+            <option value="1">1</option>
+        </select></label>
+        <br><br>
+        <label>Задание 5:
+            <select id="sel5" name="value">
+            <option value="0">0</option>
+            <option value="0.333">1/3</option>
+            <option value="0.667">2/3</option>
+            <option value="1">1</option>
+        </select></label>
+        <br><br>
+        <br><br>
+        <div id="result">Здесь будет результат</div>
+        </form>
+        
+        <script>
+            function getResult() {
+                // Получаем элемент для вывода результата
+                let resultDiv = document.getElementById("result");
+                
+                // Получаем значения из всех селектов и преобразуем в числа
+                let sel1 = document.getElementById('sel1');
+                let s1 = parseFloat(sel1.value);
+                
+                let sel2 = document.getElementById('sel2');
+                let s2 = parseFloat(sel2.value);
+                
+                let sel3 = document.getElementById('sel3');
+                let s3 = parseFloat(sel3.value);
+                
+                let sel4 = document.getElementById('sel4');
+                let s4 = parseFloat(sel4.value);
+                
+                let sel5 = document.getElementById('sel5');
+                let s5 = parseFloat(sel5.value);
+                
+                // Проверяем, есть ли хотя бы одна единица
+                let hasOne = (s1 === 1 || s2 === 1 || s3 === 1 || s4 === 1 || s5 === 1);
+                
+                // Считаем сумму
+                let sum = s1 + s2 + s3 + s4 + s5;
+                
+                // Округляем сумму до 3 знаков после запятой для надежности
+                sum = Math.round(sum * 1000) / 1000;
+                
+                // Определяем категорию
+                if (sum === 5) {
+                    resultDiv.innerHTML = "Категория 1. Набранное количество баллов: 5";
+                }
+                else if (sum >= 3.335 && hasOne) {
+                    resultDiv.innerHTML = "Категория 2. Набранное количество баллов: " + sum;
+                } 
+                else if (sum === 3.335) {
+                    resultDiv.innerHTML = "Категория 3. Набранное количество баллов: " + sum;
+                } 
+                else {
+                    resultDiv.innerHTML = "Категория 4. Набранное количество баллов: " + sum;
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Контракты сотрудников</title>
+</head>
+<body>
+
+<h2>Определение номера недели по дате</h2>
+<input type="date" id="weekDateInput">
+<button id="calculateWeekButton">Определить неделю</button>
+<span id="weekResult"></span>
+
+<h2>Ввод данных о сотрудниках</h2>
+<div id="employeeInputs"></div>
+<button id="fillSampleButton">Заполнить образец</button>
+
+<h2>Поиск сотрудников</h2>
+<div>
+    <label>Время года: </label>
+    <select id="seasonSelect">
+        <option value="0">Зима</option>
+        <option value="1">Весна</option>
+        <option value="2">Лето</option>
+        <option value="3">Осень</option>
+    </select>
+    <button id="searchBySeasonButton">Найти по времени года</button>
+</div>
+<br>
+<div>
+    <label>Квартал (1-4): </label>
+    <input type="number" id="quarterInput" min="1" max="4" value="1">
+    <button id="searchByQuarterButton">Найти по кварталу</button>
+</div>
+<br>
+<div>
+    <label>Дата (ГГГГ-ММ-ДД): </label>
+    <input type="date" id="targetDateInput">
+    <button id="searchActiveOnDateButton">Активны на дату</button>
+    <button id="searchCompletedByDateButton">Завершены на дату</button>
+</div>
+
+<h3>Результаты поиска:</h3>
+<pre id="output"></pre>
+
+<script>
+    function getWeekNumber(date) {
+        var d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+        var dayNum = d.getUTCDay() || 7;
+        d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+        var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+        return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    }
+
+    document.getElementById('calculateWeekButton').addEventListener('click', function() {
+        var dateInput = document.getElementById('weekDateInput').value;
+        if (!dateInput) {
+            alert('Введите дату');
+            return;
+        }
+        var date = new Date(dateInput);
+        var weekNumber = getWeekNumber(date);
+        document.getElementById('weekResult').textContent = 'Неделя № ' + weekNumber;
+    });
+
+    function getSeason(month) {
+        if (month >= 2 && month <= 4) return 1;
+        if (month >= 5 && month <= 7) return 2;
+        if (month >= 8 && month <= 10) return 3;
+        return 0;
+    }
+
+    function getQuarter(month) {
+        return Math.floor(month / 3) + 1;
+    }
+
+    var container = document.getElementById('employeeInputs');
+    function renderInputs() {
+        container.innerHTML = '';
+        for (var i = 0; i < 10; i++) {
+            var div = document.createElement('div');
+            div.innerHTML = (i + 1) + '. Фамилия: <input type="text" id="lastName' + i + '" placeholder="Фамилия"> ' +
+                            'Дата контракта: <input type="date" id="contractDate' + i + '"> ' +
+                            'Срок (лет): <input type="number" id="contractYears' + i + '" min="1" value="1">';
+            container.appendChild(div);
+        }
+    }
+    renderInputs();
+
+    document.getElementById('fillSampleButton').addEventListener('click', function() {
+        var sampleNames = ['Иванов', 'Петров', 'Сидоров', 'Козлов', 'Смирнов', 'Морозов', 'Волков', 'Зайцев', 'Медведев', 'Соколов'];
+        var today = new Date();
+        var year = today.getFullYear();
+        for (var i = 0; i < 10; i++) {
+            document.getElementById('lastName' + i).value = sampleNames[i];
+            var date = new Date(year, i % 12, (i * 2) % 28 + 1);
+            var dateStr = date.getFullYear() + '-' + 
+                          String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+                          String(date.getDate()).padStart(2, '0');
+            document.getElementById('contractDate' + i).value = dateStr;
+            document.getElementById('contractYears' + i).value = (i % 3) + 1;
+        }
+    });
+
+    function loadEmployees() {
+        var employees = [];
+        for (var i = 0; i < 10; i++) {
+            var lastName = document.getElementById('lastName' + i).value.trim();
+            var contractDateStr = document.getElementById('contractDate' + i).value;
+            var years = parseInt(document.getElementById('contractYears' + i).value) || 0;
+            if (!lastName || !contractDateStr || years <= 0) continue;
+            var contractDate = new Date(contractDateStr);
+            var endDate = new Date(contractDate);
+            endDate.setFullYear(endDate.getFullYear() + years);
+            employees.push({
+                lastName: lastName,
+                contractDate: contractDate,
+                endDate: endDate,
+                years: years
+            });
+        }
+        return employees;
+    }
+
+    function displayResult(results, title) {
+        var output = document.getElementById('output');
+        if (results.length === 0) {
+            output.textContent = title + ': не найдено';
+        } else {
+            var text = title + ':\n';
+            for (var i = 0; i < results.length; i++) {
+                text += results[i].lastName + ', контракт до ' + results[i].endDate.toLocaleDateString('ru-RU') + '\n';
+            }
+            output.textContent = text;
+        }
+    }
+
+    document.getElementById('searchBySeasonButton').addEventListener('click', function() {
+        var season = parseInt(document.getElementById('seasonSelect').value);
+        var employees = loadEmployees();
+        var filtered = [];
+        for (var i = 0; i < employees.length; i++) {
+            var month = employees[i].endDate.getMonth();
+            if (getSeason(month) === season) {
+                filtered.push(employees[i]);
+            }
+        }
+        var seasonNames = ['зимой', 'весной', 'летом', 'осенью'];
+        displayResult(filtered, 'Контракты, заканчивающиеся ' + seasonNames[season]);
+    });
+
+    document.getElementById('searchByQuarterButton').addEventListener('click', function() {
+        var quarter = parseInt(document.getElementById('quarterInput').value);
+        var employees = loadEmployees();
+        var filtered = [];
+        for (var i = 0; i < employees.length; i++) {
+            var month = employees[i].endDate.getMonth();
+            if (getQuarter(month) === quarter) {
+                filtered.push(employees[i]);
+            }
+        }
+        displayResult(filtered, 'Контракты, заканчивающиеся в ' + quarter + '-м квартале');
+    });
+
+    document.getElementById('searchActiveOnDateButton').addEventListener('click', function() {
+        var targetDateStr = document.getElementById('targetDateInput').value;
+        if (!targetDateStr) {
+            alert('Введите дату');
+            return;
+        }
+        var targetDate = new Date(targetDateStr);
+        var employees = loadEmployees();
+        var filtered = [];
+        for (var i = 0; i < employees.length; i++) {
+            if (employees[i].contractDate <= targetDate && employees[i].endDate >= targetDate) {
+                filtered.push(employees[i]);
+            }
+        }
+        displayResult(filtered, 'Контракты, активные на ' + targetDate.toLocaleDateString('ru-RU'));
+    });
+
+    document.getElementById('searchCompletedByDateButton').addEventListener('click', function() {
+        var targetDateStr = document.getElementById('targetDateInput').value;
+        if (!targetDateStr) {
+            alert('Введите дату');
+            return;
+        }
+        var targetDate = new Date(targetDateStr);
+        var employees = loadEmployees();
+        var filtered = [];
+        for (var i = 0; i < employees.length; i++) {
+            if (employees[i].endDate < targetDate) {
+                filtered.push(employees[i]);
+            }
+        }
+        displayResult(filtered, 'Контракты, завершённые до ' + targetDate.toLocaleDateString('ru-RU'));
+    });
+</script>
+
+</body>
+</html>

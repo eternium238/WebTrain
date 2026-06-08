@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>CSS Evolution & Positioning | Демо-сайт</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #eef2f5;
+            color: #1a2a3a;
+            line-height: 1.5;        
+            padding: 1.5rem 2rem 3rem;
+        }
+
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            padding: 1.8rem 2.2rem 2.8rem;
+        }
+
+        /* РЕКЛАМНЫЙ БЛОК*/
+
+        .ad-top {
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFD966 100%);
+            border-radius: 24px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            border-left: 6px solid #e67e22;
+            position: relative;  
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+        }
+        .ad-text {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #b45f06;
+        }
+        .ad-text span {
+            background: #ffc107;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            margin-left: 0.7rem;
+        }
+        .ad-button {
+            background: #2c3e2f;
+            color: #ffefc0;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .ad-button:hover {
+            background: #1e5a2f;
+            transform: scale(1.02);
+        }
+        /* декоративный абсолютный элемент внутри рекламного блока (absolute) */
+        .ad-badge {
+            position: absolute;
+            top: -8px;
+            right: 20px;
+            background: #c0392b;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+
+        /* МЕНЮ */
+        .menu {
+            display: flex;
+            gap: 1rem;
+            background: #f8fafc;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            border: 1px solid #dce5ec;
+        }
+        .menu a {
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            background: transparent;
+            color: #2c3e66;
+            transition: all 0.25s ease;
+            display: inline-block;
+            font-size: 1rem;
+            position: relative;   
+            z-index: 1;
+        }
+
+        .menu a:hover {
+            background: #1e466e;
+            color: white;
+            transform: scale(1.08);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            z-index: 10;
+            position: relative;
+        }
+
+
+        .page {
+            display: none;
+            animation: fade 0.25s ease;
+        }
+        .page.active-page {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .two-columns {
+            column-count: 2;
+            column-gap: 2.4rem;
+            column-rule: 1px solid #cbd5e1;
+            margin-top: 1rem;
+        }
+        .two-columns p, .two-columns h3, .two-columns ul {
+            break-inside: avoid;
+            margin-bottom: 1rem;
+        }
+        .two-columns h3 {
+            column-span: none;
+            margin-top: 0;
+        }
+        /* таблица исследований */
+        .research-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #f9fafb;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+        .research-table th, .research-table td {
+            border: 1px solid #bfd4e8;
+            padding: 0.7rem;
+            text-align: center;
+        }
+        .research-table th {
+            background: #d9e6f5;
+        }
+
+        .creators {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+            justify-content: center;
+        }
+        .card {
+            background: #f1f5f9;
+            border-radius: 28px;
+            padding: 1rem 1.5rem;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            position: relative; 
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+        .image-float-left {
+            float: left;
+            width: 150px;
+            margin: 0 1.2rem 1rem 0;
+            border-radius: 24px;
+            background: #4b6a8b;
+            color: white;
+            text-align: center;
+            padding: 2rem 0.5rem;
+            font-weight: bold;
+            shape-outside: border-box;
+        }
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+        .absolute-demo {
+            position: relative;
+            background: #eef2ff;
+            padding: 0.8rem;
+            border-radius: 20px;
+            margin: 1rem 0;
+        }
+        .abs-corner {
+            position: absolute;
+            bottom: -10px;
+            right: 10px;
+            background: #2c5282;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+        .fixed-demo-note {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2b3b4c;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            z-index: 999;
+            opacity: 0.8;
+            transition: 0.2s;
+        }
+        .fixed-demo-note:hover {
+            opacity: 1;
+            background: #1f2f3e;
+        }
+        .pos-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.2rem 0;
+            background: #fff;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .pos-table th, .pos-table td {
+            border: 1px solid #bdd4e7;
+            padding: 12px 10px;
+            vertical-align: top;
+        }
+        .pos-table th {
+            background: #e9f0f9;
+        }
+        .example-box {
+            background: #eef2fa;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            border-radius: 20px;
+            position: relative;
+            height: 140px;
+        }
+        .rel-child {
+            position: relative;
+            top: 10px;
+            left: 15px;
+            background: #a7c0d9;
+            width: fit-content;
+            padding: 0.3rem 1rem;
+            border-radius: 16px;
+        }
+        .abs-child {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: #e67e22;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+        }
+        .static-note {
+            background: #cbd5e1;
+        }
+        .float-left-demo {
+            float: left;
+            width: 90px;
+            background: #3b6e8b;
+            color: white;
+            text-align: center;
+            margin-right: 18px;
+            padding: 20px 6px;
+            border-radius: 16px;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            font-size: 0.8rem;
+            text-align: center;
+            color: #6585a3;
+            border-top: 1px solid #e2edf7;
+            padding-top: 1.3rem;
+        }
+        h1 {
+            font-size: 1.9rem;
+            margin-bottom: 0.5rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin: 1.2rem 0 0.7rem;
+        }
+        h3 {
+            margin: 0.8rem 0 0.4rem;
+        }
+        @media (max-width: 760px) {
+            body {
+                padding: 0.8rem;
+            }
+            .wrapper {
+                padding: 1.2rem;
+            }
+            .two-columns {
+                column-count: 1;
+                column-rule: none;
+            }
+            .menu a {
+                padding: 0.4rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- РЕКЛАМНЫЙ БЛОК -->
+    <div class="ad-top">
+        <div class="ad-text">
+         Освой CSS как профи! <span>Новый курс</span>
+        </div>
+        <div class="ad-text" style="font-size:0.9rem;">
+            Скидка 35% до конца недели. Адаптивный дизайн, гриды, флексы.
+        </div>
+        <button class="ad-button" onclick="alert('Спасибо за интерес! Переходи на обучение.')">Записаться →</button>
+        <div class="ad-badge">Limited</div>
+    </div>
+
+    <!-- НАВИГАЦИОННОЕ МЕНЮ -->
+    <div class="menu">
+        <a href="#" data-page="page1">Страница 1: Определение CSS & CSS3</a>
+        <a href="#" data-page="page5">Страница 5: Позиционирование</a>
+    </div>
+
+    <!--  -->
+    <div id="page1" class="page active-page">
+        <h1>Приложение А · Эволюция CSS</h1>
+        <p><strong>Каскадные таблицы стилей (CSS)</strong> — мощный механизм оформления HTML-документов. CSS прошла долгий путь развития, давайте посмотрим, как всё начиналось!</p>
+        
+        <!-- Блок с создателями + картинка / обтекание слева (вариант) -->
+        <div class="clearfix">
+            <div class="image-float-left">
+             CSS<br>история
+            </div>
+            <h2>Создатели</h2>
+            <p><strong>Хокон Виум Ли</strong> (норв. Håkon Wium Lie) предложил концепцию каскадных таблиц стилей. <strong>Тим Бернерс-Ли</strong> — изобретатель URI, URL, HTTP, HTML и Всемирной паутины. Совместно они заложили фундамент современного веба.</p>
+        </div>
+        
+        <div class="creators">
+            <div class="card"> Тим Бернерс-Ли<br><span style="font-size:0.8rem;">Основатель WWW</span></div>
+            <div class="card"> Хокон Виум Ли<br><span style="font-size:0.8rem;">Отец CSS</span></div>
+        </div>
+        
+        <!-- 2 КОЛОНКИ ТЕКСТА согласно варианту -->
+        <div class="two-columns">
+            <h3> CSS 2.1</h3>
+            <p>8 сентября 2009 года утверждена CSS2.1. Спецификация формировалась более 10 лет. Исправлены ошибки CSS2, изменения соответствия реальным браузерам, удалены устаревшие фрагменты, добавлены новые значения свойств.</p>
+            
+            <h3> CSS 3 — масштабная редакция</h3>
+            <p>CSS3 — самая значительная версия. Модульная структура открыла возможности для анимации, гибкой верстки, адаптивного дизайна. Эксперимент: сравнение разработки одной страницы на CSS2 и CSS3 показал впечатляющие результаты.</p>
+        </div>
+        
+        <!-- Таблица исследования (результаты из приложения А) -->
+        <table class="research-table">
+            <thead>
+                <tr><th>Показатель</th><th>CSS2</th><th>CSS3</th><th>Результаты</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Время разработки</td><td>73 мин</td><td>49 мин</td><td>CSS3 на 33% быстрее</td></tr>
+                <tr><td>Размер</td><td>849.2 KB</td><td>767.9 KB</td><td>CSS3 на 9.5% меньше</td></tr>
+                <tr><td>Запросы</td><td>22</td><td>12</td><td>CSS3 на 45% меньше запросов</td></tr>
+            </tbody>
+        </table>
+        
+        <!-- Демонстрация позиционирования на странице 1 (absolute и relative, чтобы были все типы) 
+             и дополнительное обтекание по заданию уже есть слева (изображение) -->
+        <div class="absolute-demo">
+             Эффективная разработка с CSS3 — адаптивность и гибкость.
+            <div class="abs-corner">абсолютный блок</div>
+        </div>
+        <p><em>CSS обеспечивает разделение содержания и оформления. Благодаря каскадности и наследованию достигается главная гибкость.</em> И, как видно из таблицы, CSS3 значительно улучшает производительность и скорость разработки.</p>
+        <!-- еще пример относительного позиционирования (relative) внутри страницы -->
+        <div style="position: relative; background: #ecfdf5; padding: 12px; border-radius: 16px; margin-top: 12px;">
+            <span style="font-weight: bold;"> Историческая справка:</span> идея CSS возникла в 1994 году. 
+            <span style="position: relative; top: -3px; left: 8px; background: #bde0fe; padding: 2px 8px; border-radius: 40px;">relative смещение</span>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА 5 (Позиционирование + таблица свойств) -->
+    <div id="page5" class="page">
+        <h1> Позиционирование в CSS</h1>
+        <p>Свойства <code>position</code> и <code>float</code> — основа управления расположением элементов. Отказ от табличной вёрстки даёт гибкость и чистый код. Рассмотрим ключевые значения <code>position</code>.</p>
+        
+        <!-- Таблица значений из приложения А (страница 5) -->
+        <table class="pos-table">
+            <thead>
+                <tr><th>Значение</th><th>Вид позиционирования</th><th>Описание</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>static</strong></td><td>Нормальный поток (по умолчанию)</td><td>Обычный блок, left/top не работают.</td></tr>
+                <tr><td><strong>relative</strong></td><td>Относительное</td><td>Смещение относительно нормальной позиции, другие элементы не затронуты.</td></tr>
+                <tr><td><strong>absolute</strong></td><td>Абсолютное</td><td>Позиционирование относительно ближайшего позиционированного контейнера. Вырывается из потока.</td></tr>
+                <tr><td><strong>fixed</strong></td><td>Фиксированное</td><td>Относительно окна браузера, не двигается при прокрутке.</td></tr>
+            </tbody>
+        </table>
+        
+        <!-- Интерактивные примеры каждого типа (для наглядности все типы позиционирования)  -->
+        <h3> Примеры на практике (демонстрация)</h3>
+        <div class="example-box" style="position: relative; background: #eef2fa;">
+            <div>Контейнер с <strong>position: relative;</strong> позволяет позиционировать дочерние absolute элементы.</div>
+            <div class="abs-child">absolute блок внутри relative</div>
+            <div class="rel-child" style="position: relative; top: 6px; background: #5b8cbc; color:white;">relative-сдвиг</div>
+        </div>
+        
+        <div style="margin: 1rem 0; background:#f2f2f2; padding: 1rem; border-radius: 24px;">
+            <div style="position: static; background: #e2e8f0; padding: 6px; border-radius: 12px;">static (обычный поток) – смещение left/top игнорируется</div>
+            <div style="position: relative; left: 20px; top: 8px; background: #ffd966; width: 80%; padding: 6px; border-radius: 20px; margin: 12px 0;">
+                 relative: смещён на 20px влево? (left:20px)
+            </div>
+        </div>
+        
+        <!-- Обтекание рисунка слева (вариант: обтекание рисунка слева) на странице 5 тоже добавим для соблюдения условия -->
+        <div class="clearfix" style="margin: 1.2rem 0; background: #fafcff; padding: 0.6rem; border-radius: 24px;">
+            <div class="float-left-demo">
+             float: left
+            </div>
+            <p><strong>Обтекание слева (по варианту):</strong> иллюстрация с использованием свойства <code>float: left</code>. Текст плавно обтекает изображение, это классический приём для гибкой вёрстки без таблиц. Вместе с CSS-позиционированием получаем мощную систему.</p>
+            <p>В CSS2 и CSS3 свойство float активно используется. Наш рекламный блок зафиксирован сверху, на страницах используются все виды позиционирования: fixed (кнопка в углу), relative (примеры), absolute (бейджи), static (по умолчанию).</p>
+        </div>
+        
+        <!-- Спецификация свойства position -->
+        <div style="background:#eef3fc; border-radius: 20px; padding: 1rem; margin-top: 1rem;">
+            <h4> Свойство position</h4>
+            <ul style="margin-left: 1.5rem;">
+                <li>Значение по умолчанию: <code>static</code></li>
+                <li>Наследуемые значения: <code>left</code>, <code>top</code> (не наследуются, но влияют)</li>
+                <li>Применяется ко всем элементам</li>
+                <li>Совместимость: все современные браузеры</li>
+            </ul>
+        </div>
+        <p>Благодаря позиционированию достигаются сложные макеты, создаются всплывающие слои, выпадающие меню. Используйте absolute и relative для точечного управления.</p>
+    </div>
+
+    <footer>
+         CSS-демонстрация: все типы позиционирования (static, relative, absolute, fixed) + обтекание слева + две колонки текста. Рекламный блок сверху. Меню с эффектами.
+    </footer>
+</div>
+
+<!-- Фиксированный элемент (fixed) для демонстрации типа позиционирования на всей странице -->
+<div class="fixed-demo-note">
+     fixed-блок (всегда виден)
+</div>
+
+<script>
+    // Функция переключения страниц 
+    const page1 = document.getElementById('page1');
+    const page5 = document.getElementById('page5');
+    const menuLinks = document.querySelectorAll('.menu a');
+
+    function showPage(pageId) {
+        if (pageId === 'page1') {
+            page1.classList.add('active-page');
+            page5.classList.remove('active-page');
+        } else if (pageId === 'page5') {
+            page5.classList.add('active-page');
+            page1.classList.remove('active-page');
+        }
+        // сохраняем состояние 
+        localStorage.setItem('currentCssPage', pageId);
+    }
+
+    menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = link.getAttribute('data-page');
+            if (page === 'page1') showPage('page1');
+            if (page === 'page5') showPage('page5');
+        });
+    });
+
+    const savedPage = localStorage.getItem('currentCssPage');
+    if (savedPage === 'page5') showPage('page5');
+    else showPage('page1');
+
+</script>
+
+</body>
+</html>
